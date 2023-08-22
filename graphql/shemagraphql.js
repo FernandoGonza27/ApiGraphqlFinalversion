@@ -1,32 +1,30 @@
-const { buildSchema } = require("graphql");
+const { gql } = require('apollo-server-express');
+const schema = gql`
+  type Prompt {
+    name: String!
+    type: String
+    instruction: String!
+    context: String
+    size: String
+    userId: ID!
+    tags: [Tag]
+    responses: [String]
+    createdAt: String
+    updatedAt: String
+  }
 
-const schema = buildSchema(`
-    type Tag {
-        description:String!
-        color: String!
-    }
-    type prompt {
-        _id: ID
-        name: String!
-        type: String!
-        instruction: String!
-        context:String
-        size:String
-        tags:[Tag]       
-        responses:[String]
+  type Tag {
+    id: ID!
+    description: String!
+    color: String
+    createdAt: String
+    updatedAt: String
+  }
 
-    }
-
-    type Query {
-        getPrompt(_id: ID): prompt
-        getPrompts: [prompt!]
-        getTag: [Tag!]
-        
-    }
-   
-
-  
-`)
-module.exports = {
-    schema
-}
+  type Query {
+    searchPromptsByName(name: String!): [Prompt]
+    searchPromptsByTagDescription(description: String!): [Prompt]
+    searchTagsByDescription(description: String!): [Tag]
+  }
+`;
+module.exports=schema;

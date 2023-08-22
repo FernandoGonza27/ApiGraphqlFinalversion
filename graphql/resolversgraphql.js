@@ -1,19 +1,24 @@
-const {
-    getPrompt
-  } = require("../controllers/prompts");
-  const {
-    getTag
-  } = require("../controllers/tag");
-// The root provides a resolver function for each API endpoint
- const graphresolvers = {
-    hello: () => {
-      return "Hello world!"
-    },
-    getPrompts: getPrompt,
-    getTag: getTag
-  
-  }
+const Prompt = require("../models/Prompts.js");
+const Tag = require('../models/Tag'); 
 
-  module.exports={
-    graphresolvers
-  }
+
+const typeDefs = {
+  Query: {
+    searchPromptsByName: async (_, { name }) => {
+      return await Prompt.find({ name });
+    },
+    searchPromptsByTagDescription: async (_, { description }) => {
+      const tags = await Tag.find({ description });
+      const tagIds = tags.map(tag => tag.id);
+      return await Prompt.find({ tags: { $in: tagIds } });
+    },
+    searchTagsByDescription: async (_, { description }) => {
+      return await Tag.find({ description });
+    },
+  },
+};
+
+
+  
+
+  module.exports=typeDefs;
